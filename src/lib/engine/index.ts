@@ -6,3 +6,4 @@ export * from "./status";
 export * from "./payday";
 export * from "./transactions";
 export * from "./goals";
+export * from "./forecast";
