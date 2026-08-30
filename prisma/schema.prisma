@@ -1,0 +1,262 @@
+// Genevieve App™ Budget Builder — authoritative data model.
+// See docs/product-contract.md for the rules this schema encodes.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum Tier {
+  PERSONAL
+  PROFESSIONAL
+}
+
+enum AccountType {
+  PERSONAL
+  BUSINESS_OPERATING
+}
+
+enum BillFrequency {
+  WEEKLY
+  FORTNIGHTLY
+  MONTHLY
+  QUARTERLY
+  ANNUALLY
+}
+
+enum FundingMethod {
+  AVERAGED
+  FULL_AMOUNT
+}
+
+enum BillStatus {
+  FUNDED
+  PARTIALLY_FUNDED
+  DUE_NEXT
+  OVERDUE
+  AT_RISK
+}
+
+enum Classification {
+  ESSENTIAL
+  WORTH_IT
+  UNSURE
+  WASTE
+}
+
+enum ReviewStatus {
+  UNREVIEWED
+  KEEP
+  RECONSIDER
+  CANCELLED
+}
+
+enum MoneyStatus {
+  GREEN
+  YELLOW
+  RED
+  RECOVERY
+}
+
+enum SubscriptionStatus {
+  TRIALING
+  ACTIVE
+  PAST_DUE
+  CANCELED
+  INCOMPLETE
+  UNPAID
+}
+
+model User {
+  id                String    @id @default(cuid())
+  email             String    @unique
+  passwordHash      String
+  name              String?
+  tier              Tier      @default(PERSONAL)
+  onboardingComplete Boolean  @default(false)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  stripeCustomerId  String?   @unique
+
+  accounts          Account[]
+  bills             Bill[]
+  transactions      Transaction[]
+  payCycles         PayCycle[]
+  savingsGoals      SavingsGoal[]
+  recurringCharges  RecurringCharge[]
+  recoveryStates    RecoveryState[]
+  auditLogs         AuditLog[]
+  subscription      BillingSubscription?
+
+  @@index([email])
+}
+
+model BillingSubscription {
+  id                     String              @id @default(cuid())
+  userId                 String              @unique
+  user                   User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  stripeSubscriptionId   String?             @unique
+  stripePriceId          String?
+  tier                   Tier                @default(PERSONAL)
+  status                 SubscriptionStatus  @default(INCOMPLETE)
+  currentPeriodEnd       DateTime?
+  cancelAtPeriodEnd      Boolean             @default(false)
+  createdAt              DateTime            @default(now())
+  updatedAt              DateTime            @updatedAt
+}
+
+model Account {
+  id                String      @id @default(cuid())
+  userId            String
+  user              User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name              String
+  type              AccountType @default(PERSONAL)
+  // Immutable historical truth. Only changed via a recorded BalanceCorrection.
+  openingBalance    Decimal     @db.Decimal(12, 2)
+  openingBalanceDate DateTime
+  // Derived/updated separately from opening balance — never overwrites it.
+  currentBalance    Decimal     @db.Decimal(12, 2)
+  protectedAmount   Decimal     @default(0) @db.Decimal(12, 2)
+  archived          Boolean     @default(false)
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+
+  bills             Bill[]
+  transactions      Transaction[]
+  corrections       BalanceCorrection[]
+
+  @@index([userId])
+}
+
+model BalanceCorrection {
+  id          String   @id @default(cuid())
+  accountId   String
+  account     Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  previousOpeningBalance Decimal @db.Decimal(12, 2)
+  newOpeningBalance      Decimal @db.Decimal(12, 2)
+  reason      String
+  createdAt   DateTime @default(now())
+}
+
+model PayCycle {
+  id            String        @id @default(cuid())
+  userId        String
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  label         String
+  frequency     BillFrequency
+  nextPayDate   DateTime
+  incomeAmount  Decimal       @db.Decimal(12, 2)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  @@index([userId])
+}
+
+model Bill {
+  id            String        @id @default(cuid())
+  userId        String
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accountId     String
+  account       Account       @relation(fields: [accountId], references: [id])
+  name          String
+  amount        Decimal       @db.Decimal(12, 2)
+  dueDate       DateTime
+  frequency     BillFrequency
+  fundingMethod FundingMethod @default(AVERAGED)
+  status        BillStatus    @default(DUE_NEXT)
+  archived      Boolean       @default(false)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  @@index([userId])
+  @@index([accountId])
+}
+
+model Transaction {
+  id             String          @id @default(cuid())
+  userId         String
+  user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accountId      String
+  account        Account         @relation(fields: [accountId], references: [id])
+  amount         Decimal         @db.Decimal(12, 2)
+  description    String
+  date           DateTime
+  category       String?
+  classification Classification?
+  // Internal transfers between owned accounts — excluded from income/expense/savings totals.
+  isTransfer     Boolean         @default(false)
+  transferPairId String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  @@index([userId])
+  @@index([accountId])
+  @@index([date])
+}
+
+model RecurringCharge {
+  id             String        @id @default(cuid())
+  userId         String
+  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name           String
+  amount         Decimal       @db.Decimal(12, 2)
+  frequency      BillFrequency
+  reviewStatus   ReviewStatus  @default(UNREVIEWED)
+  isBusinessCost Boolean       @default(false)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@index([userId])
+}
+
+model SavingsGoal {
+  id               String   @id @default(cuid())
+  userId           String
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name             String
+  targetAmount     Decimal  @db.Decimal(12, 2)
+  targetDate       DateTime?
+  contributionPlan Decimal? @db.Decimal(12, 2)
+  // Verified savings actually held, distinct from intended savings.
+  verifiedAmount   Decimal  @default(0) @db.Decimal(12, 2)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([userId])
+}
+
+model RecoveryState {
+  id              String    @id @default(cuid())
+  userId          String
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  active          Boolean   @default(true)
+  shortfallAmount Decimal   @db.Decimal(12, 2)
+  targetAmount    Decimal   @db.Decimal(12, 2)
+  progressAmount  Decimal   @default(0) @db.Decimal(12, 2)
+  notes           String?
+  startedAt       DateTime  @default(now())
+  resolvedAt      DateTime?
+
+  @@index([userId])
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  action     String
+  entityType String
+  entityId   String
+  beforeJson Json?
+  afterJson  Json?
+  createdAt  DateTime @default(now())
+
+  @@index([userId])
+  @@index([entityType, entityId])
+}
