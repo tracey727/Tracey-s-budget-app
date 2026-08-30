@@ -2,7 +2,11 @@
 // See docs/product-contract.md for the rules this schema encodes.
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  // Required for driver adapters (see lib/prisma.ts) to actually take effect
+  // instead of falling back to Prisma's native query engine binary, which
+  // can't run inside the Cloudflare Workers sandbox.
+  previewFeatures = ["driverAdapters"]
 }
 
 datasource db {
