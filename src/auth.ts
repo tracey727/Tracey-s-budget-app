@@ -5,7 +5,13 @@ import { prisma } from "@/lib/prisma";
 import { loginSchema } from "@/lib/validation";
 import { authConfig } from "@/auth.config";
 
-export const { handlers, signIn, signOut, auth } = NextAuth({
+// Passing a config *function* (rather than a plain object) makes NextAuth
+// resolve the config — including reading `process.env.AUTH_SECRET` — on
+// each request instead of once at module load. That matters on Cloudflare
+// Workers: top-level module code runs once at isolate startup, before any
+// request's env bindings exist, so a plain-object config would permanently
+// cache `secret: undefined`. See src/lib/prisma.ts for the same pattern.
+export const { handlers, signIn, signOut, auth } = NextAuth(async () => ({
   ...authConfig,
   providers: [
     Credentials({
@@ -34,4 +40,4 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
     }),
   ],
-});
+}));

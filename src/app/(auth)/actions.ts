@@ -27,16 +27,24 @@ export async function signupAction(_prevState: FormState, formData: FormData): P
 
   const { name, email, password } = parsed.data;
 
-  const existing = await prisma.user.findUnique({ where: { email } });
-  if (existing) {
-    return { error: "An account with that email already exists." };
+  try {
+    const existing = await prisma.user.findUnique({ where: { email } });
+    if (existing) {
+      return { error: "An account with that email already exists." };
+    }
+
+    const passwordHash = await bcrypt.hash(password, 12);
+
+    await prisma.user.create({
+      data: { name, email, passwordHash },
+    });
+  } catch (error) {
+    console.error(
+      "signup error:",
+      error instanceof Error ? { name: error.name, message: error.message, stack: error.stack } : error,
+    );
+    return { error: "Something went wrong creating your account. Please try again." };
   }
-
-  const passwordHash = await bcrypt.hash(password, 12);
-
-  await prisma.user.create({
-    data: { name, email, passwordHash },
-  });
 
   try {
     await signIn("credentials", { email, password, redirectTo: "/onboarding" });
