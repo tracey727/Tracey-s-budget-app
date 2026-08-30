@@ -69,53 +69,56 @@ export async function completeOnboarding(_prev: OnboardingState, formData: FormD
     }))
     .filter((b) => b.name && Number.isFinite(b.amount) && b.amount > 0 && b.dueDate);
 
-  await prisma.$transaction(async (tx) => {
-    await tx.payCycle.create({
-      data: {
+  // Sequential writes rather than an interactive $transaction: Prisma talks
+  // to Neon over plain HTTPS (see lib/prisma.ts), which issues one query per
+  // request and doesn't support multi-statement transactions. Each step is
+  // independently safe to retry, and onboardingComplete is only set true at
+  // the very end, so a partial failure never presents as a finished setup.
+  await prisma.payCycle.create({
+    data: {
+      userId,
+      label: data.payLabel,
+      frequency: data.payFrequency,
+      nextPayDate: data.nextPayDate,
+      incomeAmount: data.incomeAmount,
+    },
+  });
+
+  const account = await prisma.account.create({
+    data: {
+      userId,
+      name: data.accountName,
+      type: data.accountType,
+      openingBalance: data.openingBalance,
+      openingBalanceDate: data.openingBalanceDate,
+      currentBalance: data.openingBalance,
+    },
+  });
+
+  if (bills.length > 0) {
+    await prisma.bill.createMany({
+      data: bills.map((b) => ({
         userId,
-        label: data.payLabel,
-        frequency: data.payFrequency,
-        nextPayDate: data.nextPayDate,
-        incomeAmount: data.incomeAmount,
-      },
+        accountId: account.id,
+        name: b.name,
+        amount: b.amount,
+        dueDate: b.dueDate as Date,
+        frequency: b.frequency,
+        fundingMethod: b.fundingMethod as "AVERAGED" | "FULL_AMOUNT",
+      })),
     });
+  }
 
-    const account = await tx.account.create({
-      data: {
-        userId,
-        name: data.accountName,
-        type: data.accountType,
-        openingBalance: data.openingBalance,
-        openingBalanceDate: data.openingBalanceDate,
-        currentBalance: data.openingBalance,
-      },
-    });
+  await prisma.user.update({ where: { id: userId }, data: { onboardingComplete: true } });
 
-    if (bills.length > 0) {
-      await tx.bill.createMany({
-        data: bills.map((b) => ({
-          userId,
-          accountId: account.id,
-          name: b.name,
-          amount: b.amount,
-          dueDate: b.dueDate as Date,
-          frequency: b.frequency,
-          fundingMethod: b.fundingMethod as "AVERAGED" | "FULL_AMOUNT",
-        })),
-      });
-    }
-
-    await tx.user.update({ where: { id: userId }, data: { onboardingComplete: true } });
-
-    await tx.auditLog.create({
-      data: {
-        userId,
-        action: "ONBOARDING_COMPLETED",
-        entityType: "User",
-        entityId: userId,
-        afterJson: { accountId: account.id, billCount: bills.length },
-      },
-    });
+  await prisma.auditLog.create({
+    data: {
+      userId,
+      action: "ONBOARDING_COMPLETED",
+      entityType: "User",
+      entityId: userId,
+      afterJson: { accountId: account.id, billCount: bills.length },
+    },
   });
 
   redirect("/home");

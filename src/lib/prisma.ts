@@ -1,14 +1,18 @@
 import { PrismaClient } from "@prisma/client";
+import { PrismaNeonHTTP } from "@prisma/adapter-neon";
 
 const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
 
-// Standard Prisma + Neon setup for Vercel's Node.js serverless runtime:
-// DATABASE_URL is Neon's pooled (PgBouncer) connection string, which is
-// Vercel's and Neon's own recommended integration pattern — no driver
-// adapter needed outside edge/workers runtimes.
+// Cloudflare Workers has no raw TCP/WebSocket sockets, so Prisma talks to
+// Neon over plain HTTPS (one request per query) via Neon's serverless HTTP
+// driver. Trade-off: no interactive `$transaction` — see
+// onboarding/actions.ts, which is written as sequential writes instead.
+const adapter = new PrismaNeonHTTP(process.env.DATABASE_URL!, {});
+
 export const prisma =
   globalForPrisma.prisma ??
   new PrismaClient({
+    adapter,
     log: process.env.NODE_ENV === "development" ? ["error", "warn"] : ["error"],
   });
 
