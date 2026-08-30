@@ -1,4 +1,4 @@
-// Genevieve App™ Budget Builder — authoritative data model.
+// The Budget Calculator — authoritative data model.
 // See docs/product-contract.md for the rules this schema encodes.
 
 generator client {

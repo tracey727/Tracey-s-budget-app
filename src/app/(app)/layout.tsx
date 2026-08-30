@@ -16,8 +16,8 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   return (
     <div className="flex min-h-screen bg-ink">
       <aside className="hidden w-64 flex-col border-r border-border px-6 py-8 lg:flex">
-        <Link href="/home" className="text-xl text-ivory">
-          <Logo size={28} />
+        <Link href="/home" className="text-lg text-ivory">
+          <Logo size={26} compact />
         </Link>
         <p className="mt-1 text-xs uppercase tracking-widest text-muted">{user.tier} tier</p>
 
@@ -40,7 +40,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       <div className="flex-1">
         <header className="flex items-center justify-between border-b border-border px-4 py-3 lg:hidden">
           <Link href="/home" className="text-lg text-ivory">
-            <Logo size={24} />
+            <Logo size={24} compact />
           </Link>
           <Link href="/settings" className="text-sm text-muted">
             {user.name ?? user.email}

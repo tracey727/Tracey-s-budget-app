@@ -12,29 +12,29 @@ export default function TermsPage() {
       <p className="prose-meta">Last updated: {LAST_UPDATED}</p>
 
       <p>
-        These Terms &amp; Conditions (<strong>Terms</strong>) govern your access to and use of the Genevieve
-        App™ Budget Builder website and application (the <strong>App</strong>), operated by{" "}
+        These Terms &amp; Conditions (<strong>Terms</strong>) govern your access to and use of The Budget
+        Calculator website and application (the <strong>App</strong>), operated by{" "}
         {LEGAL_ENTITY.businessName} (ABN {LEGAL_ENTITY.abn}) of {LEGAL_ENTITY.address}
-        (<strong>Genevieve</strong>, <strong>we</strong>, <strong>us</strong> or <strong>our</strong>). By
+        (<strong>we</strong>, <strong>us</strong> or <strong>our</strong>). By
         creating an account or using the App, you agree to be bound by these Terms. If you do not agree,
         do not use the App.
       </p>
 
-      <h2>1. Who can use Genevieve</h2>
+      <h2>1. Who can use The Budget Calculator</h2>
       <p>
         You must be at least 18 years old and capable of entering into a binding contract to create an
         account. You are responsible for ensuring the information you provide is accurate and for keeping
         it up to date.
       </p>
 
-      <h2>2. What Genevieve is — and isn&rsquo;t</h2>
+      <h2>2. What The Budget Calculator is — and isn&rsquo;t</h2>
       <p>
-        Genevieve is a budgeting and money-visibility tool. It helps you see what has come in, what must
-        be protected, what is safe to spend, and how to recover when things drift off course.
+        The Budget Calculator is a budgeting and money-visibility tool. It helps you see what has come in,
+        what must be protected, what is safe to spend, and how to recover when things drift off course.
       </p>
       <p>
-        <strong>Genevieve is not a financial adviser, accountant, tax agent, bookkeeper or insolvency
-        practitioner.</strong> Nothing in the App constitutes financial product advice, tax advice,
+        <strong>The Budget Calculator is not a financial adviser, accountant, tax agent, bookkeeper or
+        insolvency practitioner.</strong> Nothing in the App constitutes financial product advice, tax advice,
         accounting advice or legal advice under the Corporations Act 2001 (Cth) or any other law. The App
         provides general information and decision support only, based on the data you enter. You remain
         solely responsible for your financial decisions. Where a decision has material consequences, we
@@ -49,7 +49,7 @@ export default function TermsPage() {
       </ul>
 
       <h2>4. Subscriptions and pricing</h2>
-      <p>Genevieve offers the following paid subscription tiers, billed in Australian Dollars (AUD):</p>
+      <p>The Budget Calculator offers the following paid subscription tiers, billed in Australian Dollars (AUD):</p>
       <ul>
         {Object.values(TIERS).map((tier) => (
           <li key={tier.id}>
@@ -89,7 +89,7 @@ export default function TermsPage() {
 
       <h2>7. Your data</h2>
       <p>
-        You own the financial data you enter into Genevieve. We process it to provide the App to you, as
+        You own the financial data you enter into The Budget Calculator. We process it to provide the App to you, as
         described in our{" "}
         <a href="/legal/privacy">Privacy Policy</a>. Historical figures such as opening balances are
         treated as immutable records unless you deliberately correct them through a recorded correction
@@ -98,7 +98,7 @@ export default function TermsPage() {
 
       <h2>8. Intellectual property</h2>
       <p>
-        {LEGAL_ENTITY.trademarkNotice} The App, its design, the Genevieve gold-and-charcoal visual
+        {LEGAL_ENTITY.trademarkNotice} The App, its design, the Budget Calculator gold-and-burgundy visual
         identity, and its underlying software are owned by or licensed to {LEGAL_ENTITY.businessName}. You
         may not copy, modify or redistribute any part of the App except as permitted by these Terms or by
         law.
@@ -106,7 +106,7 @@ export default function TermsPage() {
 
       <h2>9. Availability and changes</h2>
       <p>
-        We aim to keep Genevieve available at all times but do not guarantee uninterrupted access. We may
+        We aim to keep The Budget Calculator available at all times but do not guarantee uninterrupted access. We may
         update, modify or discontinue features of the App from time to time. Where practical, we will give
         reasonable notice of material changes that affect paid subscribers.
       </p>

@@ -14,7 +14,7 @@ export default async function BillingPage() {
     <div className="flex flex-col gap-6">
       <div>
         <h1 className="font-display text-2xl text-ivory">Billing</h1>
-        <p className="mt-1 text-sm text-muted">Manage your Genevieve subscription.</p>
+        <p className="mt-1 text-sm text-muted">Manage your Budget Calculator subscription.</p>
       </div>
 
       {!isStripeConfigured() && (

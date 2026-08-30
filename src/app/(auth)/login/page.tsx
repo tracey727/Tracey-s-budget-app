@@ -40,7 +40,7 @@ export default function LoginPage() {
       </form>
 
       <p className="mt-6 text-center text-sm text-muted">
-        New to Genevieve?{" "}
+        New to The Budget Calculator?{" "}
         <Link href="/signup" className="text-gold">
           Create an account
         </Link>

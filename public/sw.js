@@ -1,4 +1,4 @@
-// Genevieve service worker — deliberately minimal.
+// The Budget Calculator service worker — deliberately minimal.
 //
 // This app handles live financial data, so we never cache API responses or
 // authenticated page shells: every navigation goes to the network first.
@@ -6,7 +6,7 @@
 // manifest, icons) so the app installs cleanly and shows something useful
 // if the network drops mid-session, instead of a browser error page.
 
-const CACHE_NAME = "genevieve-shell-v1";
+const CACHE_NAME = "budget-calculator-shell-v2";
 const SHELL_ASSETS = [
   "/offline.html",
   "/manifest.json",

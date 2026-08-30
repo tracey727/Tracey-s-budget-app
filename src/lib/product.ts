@@ -1,9 +1,14 @@
-// Genevieve App™ Budget Builder — product contract constants.
+// The Budget Calculator — product contract constants.
 // Single source of truth for tiers, pricing and legal identity.
+//
+// The app is branded "The Budget Calculator". It is built and operated by
+// the business "Genevieve App" (see LEGAL_ENTITY) — that name appears only
+// in legal/ownership contexts (Terms, Privacy, billing, copyright), never
+// as the product name shown to users.
 
 export const BRAND = {
-  name: "Genevieve App™ Budget Builder",
-  shortName: "Genevieve",
+  name: "The Budget Calculator",
+  shortName: "Budget Calculator",
   tagline: "Know what is safe. Protect what matters. See what comes next.",
 } as const;
 
@@ -12,7 +17,7 @@ export const LEGAL_ENTITY = {
   abn: "36 530 564 761",
   address: "PO Box 475, Labrador QLD 4275, Australia",
   supportEmail: "tracey@genevievapp.com.au",
-  trademarkNotice: "Genevieve App™ is a trademark pending registration in Australia.",
+  trademarkNotice: "The Budget Calculator™ is a trademark pending registration in Australia.",
 } as const;
 
 export type TierId = "PERSONAL" | "PROFESSIONAL";
@@ -65,4 +70,4 @@ export const TIERS: Record<
 };
 
 export const NOT_ADVICE_DISCLAIMER =
-  "Genevieve supports decisions and visibility. It does not replace regulated accounting, tax, financial advice or insolvency advice.";
+  "The Budget Calculator supports decisions and visibility. It does not replace regulated accounting, tax, financial advice or insolvency advice.";

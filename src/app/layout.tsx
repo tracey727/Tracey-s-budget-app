@@ -18,17 +18,17 @@ const playfair = Playfair_Display({
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"),
   title: {
-    default: "Genevieve App™ Budget Builder",
-    template: "%s | Genevieve App™",
+    default: "The Budget Calculator",
+    template: "%s | The Budget Calculator",
   },
   description:
     "Know what is safe. Protect what matters. See what comes next. A calm, high-class money command centre for ordinary people and professionals.",
-  applicationName: "Genevieve App™",
+  applicationName: "The Budget Calculator",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "Genevieve",
+    title: "Budget Calculator",
   },
   icons: {
     icon: [

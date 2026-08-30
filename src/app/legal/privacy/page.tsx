@@ -12,15 +12,14 @@ export default function PrivacyPage() {
       <p className="prose-meta">Last updated: {LAST_UPDATED}</p>
 
       <p>
-        {LEGAL_ENTITY.businessName} (ABN {LEGAL_ENTITY.abn}) (<strong>Genevieve</strong>,{" "}
-        <strong>we</strong>, <strong>us</strong>) is committed to protecting your privacy in accordance
-        with the Privacy Act 1988 (Cth) and the Australian Privacy Principles (APPs). This Privacy Policy
-        explains how we collect, use, store and disclose your personal information when you use the
-        Genevieve App™ Budget Builder (the <strong>App</strong>).
+        {LEGAL_ENTITY.businessName} (ABN {LEGAL_ENTITY.abn}) (<strong>we</strong>, <strong>us</strong>) is
+        committed to protecting your privacy in accordance with the Privacy Act 1988 (Cth) and the
+        Australian Privacy Principles (APPs). This Privacy Policy explains how we collect, use, store and
+        disclose your personal information when you use The Budget Calculator (the <strong>App</strong>).
       </p>
       <p>
-        We design Genevieve for privacy by default: we collect only what is needed to run the App&rsquo;s
-        budgeting features, and we do not use your financial data for advertising.
+        We design The Budget Calculator for privacy by default: we collect only what is needed to run the
+        App&rsquo;s budgeting features, and we do not use your financial data for advertising.
       </p>
 
       <h2>1. Information we collect</h2>
@@ -68,14 +67,14 @@ export default function PrivacyPage() {
       <ul>
         <li><strong>Stripe, Inc.</strong> — payment processing and subscription billing.</li>
         <li><strong>Neon, Inc.</strong> — our database hosting provider, which stores your account and financial data.</li>
-        <li><strong>Vercel Inc.</strong> — our application hosting provider.</li>
+        <li><strong>Cloudflare, Inc.</strong> — our application hosting provider.</li>
         <li>Law enforcement or regulators, where required by law.</li>
-        <li>A successor entity, if Genevieve is involved in a merger, acquisition or sale of assets — you would be notified of any change in ownership or use of your personal information.</li>
+        <li>A successor entity, if {LEGAL_ENTITY.businessName} is involved in a merger, acquisition or sale of assets — you would be notified of any change in ownership or use of your personal information.</li>
       </ul>
 
       <h2>4. Overseas disclosure</h2>
       <p>
-        Some of our service providers (including Stripe, Neon and Vercel) store or process data on
+        Some of our service providers (including Stripe, Neon and Cloudflare) store or process data on
         infrastructure located outside Australia, including in the United States. Where personal
         information is disclosed overseas, we take reasonable steps to ensure it is handled consistently
         with the Australian Privacy Principles, including relying on our providers&rsquo; contractual and
@@ -113,7 +112,7 @@ export default function PrivacyPage() {
       </p>
 
       <h2>9. Children</h2>
-      <p>Genevieve is not directed at, and must not be used by, anyone under the age of 18.</p>
+      <p>The Budget Calculator is not directed at, and must not be used by, anyone under the age of 18.</p>
 
       <h2>10. Complaints</h2>
       <p>

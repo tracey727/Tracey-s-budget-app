@@ -1,6 +1,6 @@
 {
-  "name": "Genevieve App™ Budget Builder",
-  "short_name": "Genevieve",
+  "name": "The Budget Calculator",
+  "short_name": "Budget Calculator",
   "description": "Know what is safe. Protect what matters. See what comes next.",
   "start_url": "/home",
   "scope": "/",
