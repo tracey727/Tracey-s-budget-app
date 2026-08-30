@@ -37,8 +37,8 @@ export default function OnboardingPage() {
       <p className="text-xs uppercase tracking-[0.3em] text-gold">First-time setup</p>
       <h1 className="mt-2 font-display text-3xl text-ivory">Let&rsquo;s find your first money position</h1>
       <p className="mt-2 text-sm text-muted">
-        A few details and Genevieve will show what&rsquo;s protected, what&rsquo;s safe to spend, and what to
-        do next.
+        A few details and The Budget Calculator will show what&rsquo;s protected, what&rsquo;s safe to spend,
+        and what to do next.
       </p>
 
       <form action={formAction} className="mt-8 flex flex-col gap-8">
@@ -85,7 +85,7 @@ export default function OnboardingPage() {
           </div>
           <p className="mt-3 text-xs text-muted">
             This opening balance becomes a fixed historical record — your live balance will move
-            separately as you use Genevieve.
+            separately as you use The Budget Calculator.
           </p>
         </Card>
 

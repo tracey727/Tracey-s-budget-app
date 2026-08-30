@@ -2,7 +2,7 @@ import Link from "next/link";
 import { LinkButton } from "@/components/ui/LinkButton";
 import { Card } from "@/components/ui/Card";
 import { Logo, LogoMark } from "@/components/ui/Logo";
-import { BRAND, TIERS } from "@/lib/product";
+import { BRAND, LEGAL_ENTITY, NOT_ADVICE_DISCLAIMER, TIERS } from "@/lib/product";
 
 export default function LandingPage() {
   return (
@@ -89,14 +89,15 @@ export default function LandingPage() {
           ))}
         </div>
         <p className="mt-6 text-center text-xs text-muted">
-          Prices shown in AUD. Cancel anytime. Genevieve supports decisions and visibility — it does not
-          replace regulated accounting, tax or insolvency advice.
+          Prices shown in AUD. Cancel anytime. {NOT_ADVICE_DISCLAIMER}
         </p>
       </section>
 
       <footer className="border-t border-border px-6 py-10">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 text-xs text-muted sm:flex-row">
-          <span>© {new Date().getFullYear()} Genevieve App. All rights reserved.</span>
+          <span>
+            © {new Date().getFullYear()} {LEGAL_ENTITY.businessName}. All rights reserved.
+          </span>
           <div className="flex gap-6">
             <Link href="/legal/terms" className="hover:text-ivory">
               Terms &amp; Conditions
