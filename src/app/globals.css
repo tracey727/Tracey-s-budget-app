@@ -1,25 +1,25 @@
 @import "tailwindcss";
 
 :root {
-  /* Genevieve App™ — premium black/charcoal foundation, signature gold trim */
-  --color-ink: #0b0b0c;
-  --color-charcoal: #16161a;
-  --color-surface: #1c1c22;
-  --color-surface-raised: #232329;
-  --color-border: #2d2d35;
+  /* Genevieve App™ — deep burgundy foundation, classic gold trim */
+  --color-ink: #2b0810;
+  --color-charcoal: #3a0f1b;
+  --color-surface: #481323;
+  --color-surface-raised: #59192c;
+  --color-border: #6e2a3a;
 
   --color-gold: #c9a227;
-  --color-gold-light: #e4c558;
+  --color-gold-light: #e8c766;
   --color-gold-dark: #9c7d1b;
 
-  --color-cream: #f7f3e8;
-  --color-ivory: #f5f3ec;
-  --color-muted: #a8a29e;
+  --color-cream: #f7f1e3;
+  --color-ivory: #f5ece1;
+  --color-muted: #c9a9ac;
 
-  --color-green: #3fb27f;
-  --color-yellow: #e0a72e;
-  --color-red: #e0543f;
-  --color-recovery: #8b7fd6;
+  --color-green: #4bc191;
+  --color-yellow: #e5b23a;
+  --color-red: #ff6b52;
+  --color-recovery: #b09be0;
 }
 
 @theme inline {
@@ -40,7 +40,7 @@
   --color-status-recovery: var(--color-recovery);
 
   --font-display: var(--font-playfair);
-  --font-sans: var(--font-inter);
+  --font-body: var(--font-inter);
 }
 
 html {
@@ -49,9 +49,17 @@ html {
 
 body {
   background: var(--color-ink);
+  background-image: radial-gradient(ellipse 120% 60% at 50% -10%, rgba(201, 162, 39, 0.08), transparent);
   color: var(--color-ivory);
-  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-playfair), Georgia, serif;
   -webkit-font-smoothing: antialiased;
+}
+
+input,
+select,
+textarea,
+button {
+  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 }
 
 ::selection {
@@ -61,6 +69,10 @@ body {
 
 .font-display {
   font-family: var(--font-playfair), Georgia, serif;
+}
+
+.font-body {
+  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 }
 
 .gold-underline {
@@ -100,12 +112,14 @@ body {
   color: var(--color-ivory);
 }
 .prose-legal p {
+  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   color: var(--color-muted);
   line-height: 1.7;
   margin-bottom: 1rem;
 }
 .prose-legal ul,
 .prose-legal ol {
+  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   color: var(--color-muted);
   line-height: 1.7;
   margin-bottom: 1rem;

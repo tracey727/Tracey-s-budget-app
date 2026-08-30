@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { auth, signOut } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { Logo } from "@/components/ui/Logo";
 import { NavLinks } from "./NavLinks";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
@@ -15,8 +16,8 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   return (
     <div className="flex min-h-screen bg-ink">
       <aside className="hidden w-64 flex-col border-r border-border px-6 py-8 lg:flex">
-        <Link href="/home" className="font-display text-xl text-ivory">
-          Genevieve<span className="text-gold">.</span>
+        <Link href="/home" className="text-xl text-ivory">
+          <Logo size={28} />
         </Link>
         <p className="mt-1 text-xs uppercase tracking-widest text-muted">{user.tier} tier</p>
 
@@ -38,8 +39,8 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
       <div className="flex-1">
         <header className="flex items-center justify-between border-b border-border px-4 py-3 lg:hidden">
-          <Link href="/home" className="font-display text-lg text-ivory">
-            Genevieve<span className="text-gold">.</span>
+          <Link href="/home" className="text-lg text-ivory">
+            <Logo size={24} />
           </Link>
           <Link href="/settings" className="text-sm text-muted">
             {user.name ?? user.email}

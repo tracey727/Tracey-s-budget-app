@@ -1,14 +1,15 @@
 import Link from "next/link";
 import { LinkButton } from "@/components/ui/LinkButton";
 import { Card } from "@/components/ui/Card";
+import { Logo, LogoMark } from "@/components/ui/Logo";
 import { BRAND, TIERS } from "@/lib/product";
 
 export default function LandingPage() {
   return (
     <div className="flex-1 bg-ink">
       <header className="mx-auto flex max-w-6xl items-center justify-between px-6 py-6">
-        <span className="font-display text-xl tracking-wide text-ivory">
-          Genevieve<span className="text-gold">.</span>
+        <span className="text-xl tracking-wide text-ivory">
+          <Logo size={30} />
         </span>
         <nav className="flex items-center gap-6 text-sm">
           <Link href="/login" className="text-muted hover:text-ivory">
@@ -21,6 +22,7 @@ export default function LandingPage() {
       </header>
 
       <section className="mx-auto max-w-4xl px-6 pt-16 pb-20 text-center">
+        <LogoMark size={64} className="mx-auto mb-8" />
         <p className="gold-underline mb-6 inline-block text-xs uppercase tracking-[0.3em] text-gold">
           One app · Two tiers · One money engine
         </p>

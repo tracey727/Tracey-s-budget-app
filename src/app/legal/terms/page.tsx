@@ -14,7 +14,7 @@ export default function TermsPage() {
       <p>
         These Terms &amp; Conditions (<strong>Terms</strong>) govern your access to and use of the Genevieve
         App™ Budget Builder website and application (the <strong>App</strong>), operated by{" "}
-        {LEGAL_ENTITY.businessName} (ABN {LEGAL_ENTITY.abn}) of {LEGAL_ENTITY.address}, Australia
+        {LEGAL_ENTITY.businessName} (ABN {LEGAL_ENTITY.abn}) of {LEGAL_ENTITY.address}
         (<strong>Genevieve</strong>, <strong>we</strong>, <strong>us</strong> or <strong>our</strong>). By
         creating an account or using the App, you agree to be bound by these Terms. If you do not agree,
         do not use the App.
