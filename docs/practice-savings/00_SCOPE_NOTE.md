@@ -51,10 +51,41 @@ that Phase 3 and Phase 6 would normally define. Concretely:
   dashboard says so explicitly rather than showing a fabricated zero for
   those panels.
 
+## Update — Phases 0–11 now exist, but as a separate, unintegrated build
+
+`practice-savings-platform/` (added after this note was first written)
+implements Phases 0–11 properly and independently: real
+organisation/centre/role tenancy with Postgres Row Level Security, a
+DB-backed auth system with MFA for privileged roles, an audit package, and
+the generic work-item ownership engine (with transfer-with-acceptance,
+Green/Amber/Red/Recovery health states and escalation) that referrals,
+reception, appointment-leakage and handover/absence-continuity are all
+built on top of. It has its own Cloudflare Worker API (`apps/api`), its own
+Neon Postgres schema (`database/migrations`), and its own test suite (149
+tests) and CI job (`.github/workflows/practice-savings-platform-ci.yml`) —
+see `practice-savings-platform/README.md` and `CHANGELOG.md` for the
+phase-by-phase record.
+
+**It is not integrated with the phases 12–18 build described above.** The
+two builds currently sit side by side in this repository:
+
+- `practice-savings-platform/` — Phases 0–11, its own Neon database, its
+  own Cloudflare Worker, real organisation/centre/role/work-item schema.
+- `src/app/(app)/practice/` + this app's Prisma schema — Phases 12–18,
+  the personal-budget app's `User`-scoped Neon database, its own
+  Cloudflare Workers (Next.js/OpenNext) deployment.
+
+They do not share a database, an API, an auth session, or a permission
+model. A referral created in `practice-savings-platform` is invisible to
+the Phase 17 dashboard in this app, and vice versa.
+
 ## What would need to happen to remove this scope note
 
-Build Phases 0–11 properly (organisation/centre/role schema, auth/audit,
-generic work-item engine, referral/reception/appointment/handover modules),
-then either migrate phases 12–18's `userId` scoping onto the
-organisation/centre model, or confirm the single-practice, single-user
-deployment this was built for never needs multi-tenant separation.
+Migrate phases 12–18's data model and server actions to read/write
+`practice-savings-platform`'s organisation/centre/role/work-item schema
+(via its API or a shared database connection) instead of this app's
+`userId`-scoped Prisma models — replacing the workflow-gate-based
+verification/approval checks described above with the real
+`packages/permissions` role checks that already exist in
+`practice-savings-platform`. Until that migration happens, treat this as
+two builds of one blueprint, not one finished system.

@@ -1,0 +1,45 @@
+name: Practice Savings Platform CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "practice-savings-platform/**"
+      - ".github/workflows/practice-savings-platform-ci.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "practice-savings-platform/**"
+      - ".github/workflows/practice-savings-platform-ci.yml"
+
+defaults:
+  run:
+    working-directory: practice-savings-platform
+
+jobs:
+  install-typecheck-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: practice-savings-platform/.nvmrc
+          cache: pnpm
+          cache-dependency-path: practice-savings-platform/pnpm-lock.yaml
+
+      - name: Install dependencies (clean, frozen lockfile)
+        run: pnpm install --frozen-lockfile
+
+      - name: Typecheck
+        run: pnpm run typecheck
+
+      - name: Test
+        run: pnpm run test
+
+      - name: Lint
+        run: pnpm run lint

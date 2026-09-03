@@ -15,6 +15,9 @@ const eslintConfig = defineConfig([
     // Cloudflare/OpenNext build output:
     ".open-next/**",
     ".wrangler/**",
+    // Self-contained pnpm workspace (phases 0-11), linted by its own
+    // eslint config and CI job — not part of this Next.js app's project.
+    "practice-savings-platform/**",
   ]),
 ]);
 
