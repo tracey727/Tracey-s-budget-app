@@ -12,6 +12,13 @@ const ITEMS = [
   { href: "/forecast", label: "Forecast", icon: "📈" },
   { href: "/goals", label: "Savings", icon: "🎯" },
   { href: "/recovery", label: "Recovery", icon: "🧭" },
+  // Practice Savings & Revenue Protection Command (blueprint phases 12-18).
+  { href: "/practice/dashboard", label: "Practice Command", icon: "🎛️" },
+  { href: "/practice/waste", label: "Staff Time Waste", icon: "🗂️" },
+  { href: "/practice/capacity", label: "Capacity", icon: "📊" },
+  { href: "/practice/patterns", label: "Patterns", icon: "🧩" },
+  { href: "/practice/savings", label: "Savings Ledger", icon: "💰" },
+  { href: "/practice/alerts", label: "Alerts", icon: "🔔" },
   { href: "/settings", label: "Settings", icon: "⚙️" },
 ];
 

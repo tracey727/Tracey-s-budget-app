@@ -64,5 +64,12 @@ export const TIERS: Record<
   },
 };
 
+// Practice Savings & Revenue Protection Command (blueprint phases 12-18).
+// Default labour-value rate used only for *ranking/estimating* patterns and
+// released staff time in dollars (see labourValueOfMinutes). This is a
+// placeholder assumption — a real deployment should make it configurable
+// per practice/role rather than a hardcoded constant.
+export const DEFAULT_LABOUR_RATE_AUD_PER_HOUR = 55;
+
 export const NOT_ADVICE_DISCLAIMER =
   "Genevieve supports decisions and visibility. It does not replace regulated accounting, tax, financial advice or insolvency advice.";

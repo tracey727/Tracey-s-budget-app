@@ -77,87 +77,95 @@ enum SubscriptionStatus {
 }
 
 model User {
-  id                String    @id @default(cuid())
-  email             String    @unique
-  passwordHash      String
-  name              String?
-  tier              Tier      @default(PERSONAL)
+  id                 String   @id @default(cuid())
+  email              String   @unique
+  passwordHash       String
+  name               String?
+  tier               Tier     @default(PERSONAL)
   onboardingComplete Boolean  @default(false)
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
 
-  stripeCustomerId  String?   @unique
+  stripeCustomerId String? @unique
 
-  accounts          Account[]
-  bills             Bill[]
-  transactions      Transaction[]
-  payCycles         PayCycle[]
-  savingsGoals      SavingsGoal[]
-  recurringCharges  RecurringCharge[]
-  recoveryStates    RecoveryState[]
-  auditLogs         AuditLog[]
-  subscription      BillingSubscription?
+  accounts         Account[]
+  bills            Bill[]
+  transactions     Transaction[]
+  payCycles        PayCycle[]
+  savingsGoals     SavingsGoal[]
+  recurringCharges RecurringCharge[]
+  recoveryStates   RecoveryState[]
+  auditLogs        AuditLog[]
+  subscription     BillingSubscription?
+
+  // Practice Savings & Revenue Protection Command (blueprint phases 12-18).
+  wasteEvents       WasteEvent[]
+  capacitySnapshots CapacitySnapshot[]
+  systemicPatterns  SystemicPattern[]
+  savingsCases      SavingsCase[]
+  alertRules        AlertRule[]
+  notifications     Notification[]
 
   @@index([email])
 }
 
 model BillingSubscription {
-  id                     String              @id @default(cuid())
-  userId                 String              @unique
-  user                   User                @relation(fields: [userId], references: [id], onDelete: Cascade)
-  stripeSubscriptionId   String?             @unique
-  stripePriceId          String?
-  tier                   Tier                @default(PERSONAL)
-  status                 SubscriptionStatus  @default(INCOMPLETE)
-  currentPeriodEnd       DateTime?
-  cancelAtPeriodEnd      Boolean             @default(false)
-  createdAt              DateTime            @default(now())
-  updatedAt              DateTime            @updatedAt
+  id                   String             @id @default(cuid())
+  userId               String             @unique
+  user                 User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  stripeSubscriptionId String?            @unique
+  stripePriceId        String?
+  tier                 Tier               @default(PERSONAL)
+  status               SubscriptionStatus @default(INCOMPLETE)
+  currentPeriodEnd     DateTime?
+  cancelAtPeriodEnd    Boolean            @default(false)
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
 }
 
 model Account {
-  id                String      @id @default(cuid())
-  userId            String
-  user              User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  name              String
-  type              AccountType @default(PERSONAL)
+  id                 String      @id @default(cuid())
+  userId             String
+  user               User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name               String
+  type               AccountType @default(PERSONAL)
   // Immutable historical truth. Only changed via a recorded BalanceCorrection.
-  openingBalance    Decimal     @db.Decimal(12, 2)
+  openingBalance     Decimal     @db.Decimal(12, 2)
   openingBalanceDate DateTime
   // Derived/updated separately from opening balance — never overwrites it.
-  currentBalance    Decimal     @db.Decimal(12, 2)
-  protectedAmount   Decimal     @default(0) @db.Decimal(12, 2)
-  archived          Boolean     @default(false)
-  createdAt         DateTime    @default(now())
-  updatedAt         DateTime    @updatedAt
+  currentBalance     Decimal     @db.Decimal(12, 2)
+  protectedAmount    Decimal     @default(0) @db.Decimal(12, 2)
+  archived           Boolean     @default(false)
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
 
-  bills             Bill[]
-  transactions      Transaction[]
-  corrections       BalanceCorrection[]
+  bills        Bill[]
+  transactions Transaction[]
+  corrections  BalanceCorrection[]
 
   @@index([userId])
 }
 
 model BalanceCorrection {
-  id          String   @id @default(cuid())
-  accountId   String
-  account     Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
-  previousOpeningBalance Decimal @db.Decimal(12, 2)
-  newOpeningBalance      Decimal @db.Decimal(12, 2)
-  reason      String
-  createdAt   DateTime @default(now())
+  id                     String   @id @default(cuid())
+  accountId              String
+  account                Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  previousOpeningBalance Decimal  @db.Decimal(12, 2)
+  newOpeningBalance      Decimal  @db.Decimal(12, 2)
+  reason                 String
+  createdAt              DateTime @default(now())
 }
 
 model PayCycle {
-  id            String        @id @default(cuid())
-  userId        String
-  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  label         String
-  frequency     BillFrequency
-  nextPayDate   DateTime
-  incomeAmount  Decimal       @db.Decimal(12, 2)
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
+  id           String        @id @default(cuid())
+  userId       String
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  label        String
+  frequency    BillFrequency
+  nextPayDate  DateTime
+  incomeAmount Decimal       @db.Decimal(12, 2)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
 
   @@index([userId])
 }
@@ -216,21 +224,36 @@ model RecurringCharge {
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
 
+  // Phase 14 — Recurring Cost & Supplier Waste Review. These stay optional
+  // so existing personal-budget subscriptions are unaffected; only
+  // practice/business costs under active review need them populated.
+  owner          String?
+  purpose        String?
+  renewalDate    DateTime?
+  isDuplicate    Boolean   @default(false)
+  // Snapshot of the amount at the point KEEP/RECONSIDER/CANCELLED was
+  // decided, so `amount - previousAmount` gives the verified saving even
+  // after the row is later edited again.
+  previousAmount Decimal?  @db.Decimal(12, 2)
+  decisionNote   String?
+  decidedAt      DateTime?
+
   @@index([userId])
+  @@index([userId, renewalDate])
 }
 
 model SavingsGoal {
-  id               String   @id @default(cuid())
+  id               String    @id @default(cuid())
   userId           String
-  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   name             String
-  targetAmount     Decimal  @db.Decimal(12, 2)
+  targetAmount     Decimal   @db.Decimal(12, 2)
   targetDate       DateTime?
-  contributionPlan Decimal? @db.Decimal(12, 2)
+  contributionPlan Decimal?  @db.Decimal(12, 2)
   // Verified savings actually held, distinct from intended savings.
-  verifiedAmount   Decimal  @default(0) @db.Decimal(12, 2)
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  verifiedAmount   Decimal   @default(0) @db.Decimal(12, 2)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
 
   @@index([userId])
 }
@@ -263,4 +286,262 @@ model AuditLog {
 
   @@index([userId])
   @@index([entityType, entityId])
+}
+
+// ============================================================================
+// Practice Savings & Revenue Protection Command — blueprint phases 12-18.
+//
+// Scope note: the blueprint's own chronological build plan (phases 0-11)
+// would first establish organisations/centres/roles and a generic work-item
+// ownership engine before any of this. This build was explicitly scoped to
+// start at Phase 12, so these models are deliberately user-scoped (the same
+// tenancy pattern already used by every model above) rather than
+// organisation/centre/role-scoped. Multi-tenant/role separation remains
+// Phase 3 + Phase 6 work and is not implemented here — see
+// docs/practice-savings/00_SCOPE_NOTE.md.
+// ============================================================================
+
+enum WasteCategory {
+  DUPLICATE_WORK
+  REWORK
+  SEARCHING
+  WAITING
+  MANUAL_ENTRY
+  WRONG_ROLE_WORK
+  UNNECESSARY_APPROVAL
+}
+
+enum WasteStatus {
+  LOGGED
+  ROOT_CAUSE_CONFIRMED
+  INTERVENTION_PLANNED
+  INTERVENTION_ACTIVE
+  MEASURED
+  VERIFIED
+}
+
+enum PatternStatus {
+  IDENTIFIED
+  ACTION_ASSIGNED
+  IN_PROGRESS
+  MEASURED
+}
+
+enum SavingsCategory {
+  RECOVERED_REVENUE
+  AVOIDED_COST
+  RELEASED_STAFF_TIME
+}
+
+enum SavingsUnit {
+  MINUTES
+  CURRENCY
+}
+
+enum SavingsState {
+  POTENTIAL
+  APPROVED
+  IMPLEMENTED
+  MEASURED
+  VERIFIED
+}
+
+// Generic source pointer used by SavingsCase and PatternEvent so the ledger
+// and pattern grouping can cite evidence anywhere in the system without a
+// hard foreign key into every domain table (the same "generic work item"
+// principle the blueprint's Phase 7 engine uses).
+enum SourceType {
+  WASTE_EVENT
+  RECURRING_COST
+  SYSTEMIC_PATTERN
+  CAPACITY_SNAPSHOT
+  MANUAL
+}
+
+enum AlertSeverity {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum AlertTrigger {
+  WASTE_RECURRING
+  CAPACITY_IDLE_HIGH
+  COST_RENEWAL_DUE
+  PATTERN_UNASSIGNED
+  SAVINGS_STALLED
+}
+
+enum NotificationStatus {
+  UNREAD
+  ACKNOWLEDGED
+  ACTIONED
+}
+
+/// Phase 12 — Staff Time Waste & Duplication (M05).
+model WasteEvent {
+  id                      String        @id @default(cuid())
+  userId                  String
+  user                    User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category                WasteCategory
+  description             String
+  estimatedMinutes        Decimal       @db.Decimal(8, 2)
+  isRecurring             Boolean       @default(false)
+  recurrenceNote          String?
+  rootCause               String?
+  status                  WasteStatus   @default(LOGGED)
+  interventionDescription String?
+  interventionStartedAt   DateTime?
+  // Baseline is frozen once root cause is confirmed so a later edit to
+  // estimatedMinutes never rewrites the before/after comparison.
+  baselineMinutes         Decimal?      @db.Decimal(8, 2)
+  postMinutes             Decimal?      @db.Decimal(8, 2)
+  createdAt               DateTime      @default(now())
+  updatedAt               DateTime      @updatedAt
+
+  @@index([userId])
+  @@index([userId, status])
+}
+
+/// Phase 13 — Capacity & Utilisation (M07).
+model CapacitySnapshot {
+  id                      String   @id @default(cuid())
+  userId                  String
+  user                    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  label                   String
+  periodStart             DateTime
+  periodEnd               DateTime
+  availableUnits          Decimal  @db.Decimal(10, 2)
+  filledUnits             Decimal  @db.Decimal(10, 2)
+  waitingDemandUnits      Decimal  @default(0) @db.Decimal(10, 2)
+  referralDemandUnits     Decimal  @default(0) @db.Decimal(10, 2)
+  cancellationUnits       Decimal  @default(0) @db.Decimal(10, 2)
+  // Approved leave/training/non-working time — excluded from "avoidable"
+  // idle capacity so legitimate non-working time is never misclassified
+  // as recoverable (Phase 13 GREEN GATE requirement).
+  approvedNonWorkingUnits Decimal  @default(0) @db.Decimal(10, 2)
+  notes                   String?
+  createdAt               DateTime @default(now())
+
+  @@index([userId])
+  @@index([userId, periodStart])
+}
+
+/// Phase 15 — Systemic Pattern, Waste & Prevention Command (M09).
+model SystemicPattern {
+  id                      String        @id @default(cuid())
+  userId                  String
+  user                    User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title                   String
+  description             String?
+  status                  PatternStatus @default(IDENTIFIED)
+  estimatedImpactMinutes  Decimal?      @db.Decimal(10, 2)
+  estimatedImpactCurrency Decimal?      @db.Decimal(12, 2)
+  rootCause               String?
+  ownerName               String?
+  dueDate                 DateTime?
+  preventionAction        String?
+  measuredResultNote      String?
+  createdAt               DateTime      @default(now())
+  updatedAt               DateTime      @updatedAt
+
+  events PatternEvent[]
+
+  @@index([userId])
+  @@index([userId, status])
+}
+
+// Links repeated events into a pattern without ever touching the linked
+// event's own row — grouping is additive/append-only so individual event
+// history is never corrupted (Phase 15 GREEN GATE requirement).
+model PatternEvent {
+  id         String          @id @default(cuid())
+  patternId  String
+  pattern    SystemicPattern @relation(fields: [patternId], references: [id], onDelete: Cascade)
+  sourceType SourceType
+  sourceId   String
+  note       String?
+  linkedAt   DateTime        @default(now())
+
+  @@index([patternId])
+  @@index([sourceType, sourceId])
+}
+
+/// Phase 16 — Verified Savings Ledger (M10).
+model SavingsCase {
+  id                String          @id @default(cuid())
+  userId            String
+  user              User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category          SavingsCategory
+  title             String
+  description       String?
+  sourceType        SourceType      @default(MANUAL)
+  sourceId          String?
+  baselineValue     Decimal         @db.Decimal(12, 2)
+  baselineUnit      SavingsUnit
+  postValue         Decimal?        @db.Decimal(12, 2)
+  calculationMethod String
+  evidenceNote      String?
+  state             SavingsState    @default(POTENTIAL)
+  approvedAt        DateTime?
+  approvedBy        String?
+  implementedAt     DateTime?
+  measuredAt        DateTime?
+  verifiedAt        DateTime?
+  verifiedBy        String?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  // Double-counting control (08_SAVINGS_MEASUREMENT.md): a single source
+  // event may back at most one savings case. Postgres treats each NULL
+  // sourceId as distinct, so MANUAL cases (sourceId null) are unaffected.
+  @@unique([sourceType, sourceId])
+  @@index([userId])
+  @@index([userId, state])
+  @@index([userId, category])
+}
+
+/// Phase 18 — Alerts, Notifications & Accountability.
+model AlertRule {
+  id               String        @id @default(cuid())
+  userId           String
+  user             User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name             String
+  triggerType      AlertTrigger
+  severity         AlertSeverity @default(MEDIUM)
+  // Digest-only rules still evaluate but are meant to be reviewed in a
+  // batch rather than alerted on individually (avoids alert fatigue).
+  digestOnly       Boolean       @default(false)
+  enabled          Boolean       @default(true)
+  thresholdMinutes Decimal?      @db.Decimal(10, 2)
+  thresholdDays    Int?
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  notifications Notification[]
+
+  @@index([userId])
+}
+
+model Notification {
+  id             String             @id @default(cuid())
+  userId         String
+  user           User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  alertRuleId    String?
+  alertRule      AlertRule?         @relation(fields: [alertRuleId], references: [id], onDelete: SetNull)
+  severity       AlertSeverity
+  title          String
+  body           String
+  sourceType     SourceType?
+  sourceId       String?
+  // Stable per-condition key (e.g. "WASTE_RECURRING:<wasteEventId>") used to
+  // suppress duplicate alerts for the same underlying condition.
+  dedupeKey      String
+  status         NotificationStatus @default(UNREAD)
+  acknowledgedAt DateTime?
+  createdAt      DateTime           @default(now())
+
+  @@unique([userId, dedupeKey])
+  @@index([userId])
+  @@index([userId, status])
 }

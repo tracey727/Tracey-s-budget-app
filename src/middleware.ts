@@ -16,6 +16,7 @@ const PROTECTED_PREFIXES = [
   "/recovery",
   "/reports",
   "/settings",
+  "/practice",
 ];
 
 export default async function proxy(req: NextRequest) {

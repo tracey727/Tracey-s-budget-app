@@ -42,6 +42,18 @@ export function AddChargeForm() {
           Business/operating cost
         </label>
       </div>
+      <details className="text-sm text-muted">
+        <summary className="cursor-pointer text-gold">Practice cost-review fields (optional)</summary>
+        <div className="mt-3 grid gap-3 sm:grid-cols-2">
+          <Input name="owner" placeholder="Service owner" />
+          <Input name="renewalDate" type="date" />
+          <Input name="purpose" placeholder="Purpose / why we pay this" className="sm:col-span-2" />
+          <label className="flex items-center gap-2 text-sm text-muted">
+            <input type="checkbox" name="isDuplicate" />
+            Possible duplicate of another service
+          </label>
+        </div>
+      </details>
       {state.error && <p className="text-sm text-status-red">{state.error}</p>}
       <div className="flex gap-2">
         <Button type="submit" disabled={pending}>
